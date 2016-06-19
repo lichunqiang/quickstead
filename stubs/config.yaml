@@ -1,0 +1,72 @@
+---
+ip: "192.168.10.10"
+memory: 2048
+cpus: 1
+provider: virtualbox
+box: light/dev-box
+
+# Provison 时是否重新部署 软件环境
+provison_soft: true
+# Provison 时如果存在同版软件是否重新安装
+# provison_reinstall: true
+
+authorize: ~/.ssh/id_rsa.pub
+
+keys:
+    - ~/.ssh/id_rsa
+
+# PHP 版本
+# php: php70
+
+# Mysql 版本
+# mysql: mysql57
+
+# PostgreSql 版本
+# pgsql: pgsql95
+
+# 共享文件夹
+folders:
+  - map: ~/Projects
+    to: /home/vagrant/Projects
+
+# 拷贝文件到虚拟机
+copy:
+  - from: ~/copy.demo
+    to: /home/vagrant/copy.demo
+
+
+# 站点映射
+sites:
+  - conf: demo.app
+    servers:
+      - map: static.demo.app
+        to: /home/vagrant/Projects/Demo/static
+        type: static
+
+      - map: "demo.app *.demo.app"
+        to: /home/vagrant/Projects/Demo
+        aliases: "demo.app a.demo.app u.demo.app www.demo.app"
+        # port: 80
+        # ssl: 443
+
+# 计划任务
+schedules:
+  - name: redis_demo
+    user: vagrant
+    interval: "* 0 */1 * *"
+    command: "/usr/bin/redis-cli -h localhost DEL 'some-throttle'"
+
+# 创建数据库
+# databases:
+#    - name: vagrant
+#      db: mysql
+#    - name: vagrant
+#      db: pgsql
+
+# 端口映射
+# ports:
+#     - send: 50000
+#       to: 5000
+#     - send: 7777
+#       to: 777
+#       protocol: udp
